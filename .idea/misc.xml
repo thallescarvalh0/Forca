@@ -3,7 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/PosGraduacao/Forca/app/src/main/res/drawable/ic_config_white.xml" value="0.1625" />
+        <entry key="..\:/PosGraduacao/Forca/app/src/main/res/layout/activity_configurar.xml" value="0.33" />
+        <entry key="..\:/PosGraduacao/Forca/app/src/main/res/layout/activity_jogar.xml" value="0.25" />
         <entry key="..\:/PosGraduacao/Forca/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/PosGraduacao/Forca/app/src/main/res/menu/menu_jogar.xml" value="0.25" />
+        <entry key="..\:/PosGraduacao/Forca/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2075" />
+        <entry key="..\:/PosGraduacao/Forca/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2075" />
       </map>
     </option>
   </component>

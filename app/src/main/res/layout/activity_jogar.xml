@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.JogarActivity">
+
+    <LinearLayout
+        android:id="@+id/cabecalhoJogarLl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/nivelDificuldadeTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dificuldade: 0"
+                android:textSize="20sp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/quantidadeRodadasTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quantidade Rodadas: 0"
+                android:textSize="20sp"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp">
+
+          <Button
+              android:id="@+id/btnIniciarRodadas"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Iniciar Rodada"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/infoJogoTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/cabecalhoJogarLl"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/rodadaAtualTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rodada atual: 0"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/cabecaJogarTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CABECA"
+                android:textAlignment="center"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/braco1Tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="BRACO 1"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/troncoTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TRONCO"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/braco2Tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="BRACO 2"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/perna1Tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PERNA 1"
+                android:layout_weight="1"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:id="@+id/perna2Tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PERNA 2"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/palavraTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="PalavraAPITV"
+        android:textAlignment="center"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/infoJogoTv"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:id="@+id/letrasSelecionadasTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="letrasSelecionadas"
+        android:textAlignment="center"
+        android:layout_marginTop="10dp"
+        android:textSize="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/palavraTv"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/tecladoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/letrasSelecionadasTv"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <Button
+                android:id="@+id/aBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A"
+                android:layout_weight="1"
+                android:textSize="15sp"/>
+
+            <Button
+                android:id="@+id/bBtn"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="B"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+            <Button
+                android:id="@+id/cBtn"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="C"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+            <Button
+                android:id="@+id/dBtn"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="D"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/fBtn"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="F"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/gBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="G"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/hBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:text="H"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/iBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="I"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <Button
+                android:id="@+id/jBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="J"
+                android:layout_weight="1"
+                android:textSize="15sp"/>
+
+            <Button
+                android:id="@+id/kBtn"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="K"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+            <Button
+                android:id="@+id/lBtn"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="L"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+            <Button
+                android:id="@+id/mBtn"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="M"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/nBtn"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="N"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/oBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="O"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <Button
+                android:id="@+id/pBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:text="P"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/qBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="Q"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/rBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="R"
+                android:layout_weight="1"
+                android:textSize="15sp"/>
+
+            <Button
+                android:id="@+id/sBtn"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="S"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+            <Button
+                android:id="@+id/tBtn"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="T"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+            <Button
+                android:id="@+id/uBtn"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="U"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <Button
+                android:id="@+id/vBtn"
+                android:layout_marginStart="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="V"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/wBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="W"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/xBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:text="X"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/YBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="Y"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/zBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="Z"
+                android:layout_weight="1"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
