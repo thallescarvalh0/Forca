@@ -3,14 +3,23 @@ package br.edu.ifsp.scl.sdm.pa2.forca.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import android.widget.Button
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProvider
 import br.edu.ifsp.scl.sdm.pa2.forca.R
 import br.edu.ifsp.scl.sdm.pa2.forca.databinding.ActivityJogarBinding
+import br.edu.ifsp.scl.sdm.pa2.forca.viewmodel.ForcaViewModel
+import java.lang.StringBuilder
 
-class JogarActivity : AppCompatActivity(), View.OnClickListener{
+class JogarActivity : AppCompatActivity(){
+
+    companion object{
+        const val  NIVEL_DIFICULDADE = "DIFICULDADE"
+        const val  QUANTIDADE_RODADAS = "RODADAS"
+    }
 
     private val activityJogarBinding: ActivityJogarBinding by lazy {
         ActivityJogarBinding.inflate(layoutInflater)
@@ -19,16 +28,18 @@ class JogarActivity : AppCompatActivity(), View.OnClickListener{
     private var nivelDificuldade : Int = 0
     private var rodadas : Int = 0
 
-    companion object{
-        const val  NIVEL_DIFICULDADE = "DIFICULDADE"
-        const val  QUANTIDADE_RODADAS = "RODADAS"
-    }
+    private var jogandoRodada : Boolean = false
+    private lateinit var forcaViewModel: ForcaViewModel
+
+    private var idPalavra = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(activityJogarBinding.root)
 
-        activityJogarBinding.btnIniciarRodadas.isEnabled = false
+        forcaViewModel = ViewModelProvider
+            .AndroidViewModelFactory(this.application)
+            .create(ForcaViewModel::class.java)
 
         configurarActivityResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()){ result ->
@@ -36,11 +47,9 @@ class JogarActivity : AppCompatActivity(), View.OnClickListener{
                 with(result){
                     data?.getIntExtra(NIVEL_DIFICULDADE, 0).takeIf { it!=null }.let {
                         nivelDificuldade = it.toString().toInt()
-                        Log.v("dificuldade", "$nivelDificuldade")
                     }
                     data?.getIntExtra(QUANTIDADE_RODADAS, 0).takeIf { it!=null }.let {
                         rodadas = it.toString().toInt()
-                        Log.v("rodadae", "$rodadas")
                     }
                 }
 
@@ -52,9 +61,23 @@ class JogarActivity : AppCompatActivity(), View.OnClickListener{
             }
         }
 
-        activityJogarBinding.btnIniciarRodadas.setOnClickListener {
-            //todo iniciar rodada chamando as rotinas do view model para buscar a palavra na api
+        cliqueBotoesAlfabeto()
+
+        with(activityJogarBinding){
+            btnIniciarRodadas.isEnabled = false
+
+            btnIniciarRodadas.setOnClickListener {
+                forcaViewModel.startGame(nivelDificuldade)
+            }
         }
+
+        /*forcaViewModel.palavraMld.observe(this){ palavra ->
+            activityJogarBinding.palavraTv.text = palavra.palavra
+        }*/
+        forcaViewModel.identificadoresPalavrasDificuldade.observe(this){
+            activityJogarBinding.palavraTv.text = it[1].toString()
+        }
+
 
     }
 
@@ -67,7 +90,7 @@ class JogarActivity : AppCompatActivity(), View.OnClickListener{
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.configurarJogo -> {
-                val intentConfigurar: Intent = Intent(this, ConfigurarActivity::class.java)
+                val intentConfigurar = Intent(this, ConfigurarActivity::class.java)
                 configurarActivityResultLauncher.launch(intentConfigurar)
                 true
             }
@@ -75,8 +98,55 @@ class JogarActivity : AppCompatActivity(), View.OnClickListener{
         }
     }
 
-    override fun onClick(p0: View?) {
-        TODO("Not yet implemented")
+    fun cliqueBotoesAlfabeto(){
+        with(activityJogarBinding){
+            aBtn.setOnClickListener { letraSelecionada("a", aBtn ) }
+            bBtn.setOnClickListener { letraSelecionada("b", bBtn ) }
+            cBtn.setOnClickListener { letraSelecionada("c", cBtn ) }
+            dBtn.setOnClickListener { letraSelecionada("d", dBtn ) }
+            eBtn.setOnClickListener { letraSelecionada("e", eBtn ) }
+            fBtn.setOnClickListener { letraSelecionada("f", fBtn ) }
+            gBtn.setOnClickListener { letraSelecionada("g", gBtn ) }
+            hBtn.setOnClickListener { letraSelecionada("h", hBtn ) }
+            iBtn.setOnClickListener { letraSelecionada("i", iBtn ) }
+            jBtn.setOnClickListener { letraSelecionada("j", jBtn ) }
+            kBtn.setOnClickListener { letraSelecionada("k", kBtn ) }
+            lBtn.setOnClickListener { letraSelecionada("l", lBtn ) }
+            mBtn.setOnClickListener { letraSelecionada("m", mBtn ) }
+            nBtn.setOnClickListener { letraSelecionada("n", nBtn ) }
+            oBtn.setOnClickListener { letraSelecionada("o", oBtn ) }
+            pBtn.setOnClickListener { letraSelecionada("p", pBtn ) }
+            qBtn.setOnClickListener { letraSelecionada("q", qBtn ) }
+            rBtn.setOnClickListener { letraSelecionada("r", rBtn ) }
+            sBtn.setOnClickListener { letraSelecionada("s", sBtn ) }
+            tBtn.setOnClickListener { letraSelecionada("t", tBtn ) }
+            uBtn.setOnClickListener { letraSelecionada("u", uBtn ) }
+            vBtn.setOnClickListener { letraSelecionada("v", vBtn ) }
+            wBtn.setOnClickListener { letraSelecionada("w", wBtn ) }
+            xBtn.setOnClickListener { letraSelecionada("x", xBtn ) }
+            yBtn.setOnClickListener { letraSelecionada("y", yBtn ) }
+            zBtn.setOnClickListener { letraSelecionada("z", zBtn ) }
+        }
+    }
+    fun letraSelecionada(letra: String, button: Button) {
+        if (jogandoRodada){
+            button.isEnabled = false
+            adicionaLetraSelecionada(letra)
+        }
+    }
+    fun adicionaLetraSelecionada(letra: String){
+        var letrasSelecionadas: String
+        with(activityJogarBinding){
+            letrasSelecionadas = letrasSelecionadasTv.text.toString()
+            if (letrasSelecionadas == ""){
+                letrasSelecionadas = letra
+            }
+            else{
+                letrasSelecionadas += " - $letra"
+            }
+            letrasSelecionadasTv.text = letrasSelecionadas
+        }
+        Toast.makeText(applicationContext, letra,Toast.LENGTH_SHORT).show()
     }
 
 
