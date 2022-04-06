@@ -9,7 +9,7 @@ interface ForcaApi {
     @GET("identificadores/{nivel}")
     fun retrieveIdentificadores(@Path("nivel") id: Int): Call<Dificuldade>
 
-    @GET("palavra/{id}")
-    fun retrievePalavra(@Path("id") id: Int): Call<Palavras>
+    @GET("palavra/{pid}")
+    fun retrievePalavra(@Path("pid") pid: Int): Call<ArrayList<Palavra>>
 
 }

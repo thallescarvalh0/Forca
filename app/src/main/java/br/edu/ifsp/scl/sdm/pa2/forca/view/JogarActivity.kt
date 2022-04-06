@@ -11,8 +11,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import br.edu.ifsp.scl.sdm.pa2.forca.R
 import br.edu.ifsp.scl.sdm.pa2.forca.databinding.ActivityJogarBinding
+import br.edu.ifsp.scl.sdm.pa2.forca.model.Palavra
 import br.edu.ifsp.scl.sdm.pa2.forca.viewmodel.ForcaViewModel
-import java.lang.StringBuilder
 
 class JogarActivity : AppCompatActivity(){
 
@@ -67,18 +67,25 @@ class JogarActivity : AppCompatActivity(){
             btnIniciarRodadas.isEnabled = false
 
             btnIniciarRodadas.setOnClickListener {
-                forcaViewModel.startGame(nivelDificuldade)
+                forcaViewModel.getIdentificadoresPorDificuldade(nivelDificuldade)
             }
         }
 
-        /*forcaViewModel.palavraMld.observe(this){ palavra ->
-            activityJogarBinding.palavraTv.text = palavra.palavra
-        }*/
         forcaViewModel.identificadoresPalavrasDificuldade.observe(this){
-            activityJogarBinding.palavraTv.text = it[1].toString()
+            forcaViewModel.getIdentificadorPalavra()
         }
 
+        forcaViewModel.idPalavraLista.observe(this){
+            forcaViewModel.getPalavra(it.toInt())
+        }
 
+        forcaViewModel.palavraMld.observe(this){ lista ->
+            lista.forEach { palavra ->
+                palavra.palavra.also { palavra ->
+                    activityJogarBinding.palavraTv.text = palavra
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
