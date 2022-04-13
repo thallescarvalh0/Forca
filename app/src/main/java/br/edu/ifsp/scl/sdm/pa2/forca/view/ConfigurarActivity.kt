@@ -43,7 +43,7 @@ class ConfigurarActivity : AppCompatActivity() {
                 val quantidadeRodadas = quantidadeRodadaEt.text.toString()
                 rodadas = convertStringToInt(quantidadeRodadas)
 
-                if ((rodadas > 0) && (nivelDificildade > 0)) {
+                if (((rodadas > 0) && (rodadas <= 15)) && (nivelDificildade > 0)) {
                     val retornoIntent = Intent()
                     retornoIntent.putExtra(NIVEL_DIFICULDADE, nivelDificildade)
                     retornoIntent.putExtra(QUANTIDADE_RODADAS, rodadas)
@@ -51,7 +51,7 @@ class ConfigurarActivity : AppCompatActivity() {
                     setResult(RESULT_OK, retornoIntent)
                     finish()
                 }else{
-                    Toast.makeText(applicationContext, "Selecione o nível de Dificuldade e Rodadas para Iniciar", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Selecione o nível de Dificuldade e Rodadas (1 a 15) para Iniciar", Toast.LENGTH_SHORT).show()
                 }
 
             }

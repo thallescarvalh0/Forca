@@ -27,11 +27,15 @@ class JogarActivity : AppCompatActivity(){
     private lateinit var configurarActivityResultLauncher: ActivityResultLauncher<Intent>
     private var nivelDificuldade : Int = 0
     private var rodadas : Int = 0
+    private var rodadaAtual: Int = 0
+
+    private var qtdeLetrasRodada: Int = 0
+    private var qtdeLetrasRodadaAtual: Int = 1
+    private var palavraRodada : String = ""
 
     private var jogandoRodada : Boolean = false
     private lateinit var forcaViewModel: ForcaViewModel
 
-    private var idPalavra = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,24 +72,34 @@ class JogarActivity : AppCompatActivity(){
 
             btnIniciarRodadas.setOnClickListener {
                 forcaViewModel.getIdentificadoresPorDificuldade(nivelDificuldade)
+                activityJogarBinding.rodadaAtualTv.text = "Rodada atual: 1"
+                jogandoRodada = true
+                btnIniciarRodadas.isEnabled = false
             }
         }
-
         forcaViewModel.identificadoresPalavrasDificuldade.observe(this){
-            forcaViewModel.getIdentificadorPalavra()
+            forcaViewModel.getIdentificadorPalavra(rodadas)
         }
 
         forcaViewModel.idPalavraLista.observe(this){
-            forcaViewModel.getPalavra(it.toInt())
+            if (palavraRodada == ""){
+                forcaViewModel.getPalavra(forcaViewModel.palavrasLista[rodadaAtual])
+
+            }
         }
 
         forcaViewModel.palavraMld.observe(this){ lista ->
             lista.forEach { palavra ->
                 palavra.palavra.also { palavra ->
-                    activityJogarBinding.palavraTv.text = palavra
+                    palavraRodada = palavra
+                    activityJogarBinding.palavraTv.text = palavraRodada
+                }
+                palavra.letras.also { letras ->
+                    qtdeLetrasRodada = letras
                 }
             }
         }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -139,6 +153,27 @@ class JogarActivity : AppCompatActivity(){
         if (jogandoRodada){
             button.isEnabled = false
             adicionaLetraSelecionada(letra)
+
+            if (qtdeLetrasRodadaAtual <= 6) {
+                if (palavraRodada.contains(letra, false)){
+                    Toast.makeText(applicationContext,
+                        "Correta $qtdeLetrasRodada - $qtdeLetrasRodadaAtual",
+                        Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    Toast.makeText(applicationContext,
+                        "Errada $qtdeLetrasRodada - $qtdeLetrasRodadaAtual",
+                        Toast.LENGTH_SHORT).show()
+                }
+                qtdeLetrasRodadaAtual++
+            }
+            else{
+                //Vou adicionar apenas se o cara perder ou ganhar a rodada
+                rodadaAtual ++
+            }
+
+
+
         }
     }
     fun adicionaLetraSelecionada(letra: String){

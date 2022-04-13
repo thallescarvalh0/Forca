@@ -59,13 +59,21 @@ class ForcaViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun getIdentificadorPalavra(){
-        val random = Random()
-        val identificadorPalavraDif = random.nextInt(identificadoresPalavrasDificuldade.value!!.size - 1)
-        val idPalavra = identificadoresPalavrasDificuldade.value!![identificadorPalavraDif].toString()
-        if (!palavrasLista.contains(idPalavra.toInt())){
-            palavrasLista.add(idPalavra.toInt())
-            idPalavraLista.postValue(idPalavra.toInt())
+    fun getIdentificadorPalavra(totalRodadas: Int){
+        escopoCorrotinas.launch {
+            var rodada: Int = 0
+            while (rodada != totalRodadas) {
+                val random = Random()
+                val identificadorPalavraDif =
+                    random.nextInt(identificadoresPalavrasDificuldade.value!!.size - 1)
+                val idPalavra =
+                    identificadoresPalavrasDificuldade.value!![identificadorPalavraDif].toString()
+                if (!palavrasLista.contains(idPalavra.toInt())) {
+                    palavrasLista.add(idPalavra.toInt())
+                    idPalavraLista.postValue(idPalavra.toInt())
+                    rodada++
+                }
+            }
         }
     }
 
@@ -80,6 +88,7 @@ class ForcaViewModel(application: Application): AndroidViewModel(application) {
                     //Log.e("erroPalavra", response.body()?.toMutableList().toString())
                 }
 
+                @SuppressLint("LongLogTag")
                 override fun onFailure(call: Call<ArrayList<Palavra>>, t: Throwable) {
                     Log.e("$BASE_URL", t.message.toString())
                 }
