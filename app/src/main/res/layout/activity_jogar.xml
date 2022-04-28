@@ -393,6 +393,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/llteclado"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -459,6 +460,18 @@
                 tools:ignore="ButtonStyle"/>
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/relatorioTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textAlignment="center"
+            android:layout_marginTop="20dp"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@+id/llteclado"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"/>
 
     </LinearLayout>
 

@@ -1,18 +1,18 @@
 package br.edu.ifsp.scl.sdm.pa2.forca.view
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import br.edu.ifsp.scl.sdm.pa2.forca.R
 import br.edu.ifsp.scl.sdm.pa2.forca.databinding.ActivityJogarBinding
-import br.edu.ifsp.scl.sdm.pa2.forca.model.Palavra
 import br.edu.ifsp.scl.sdm.pa2.forca.viewmodel.ForcaViewModel
+import java.text.Normalizer
 
 class JogarActivity : AppCompatActivity(){
 
@@ -33,9 +33,12 @@ class JogarActivity : AppCompatActivity(){
     private var qtdeLetrasRodadaAtual: Int = 1
     private var palavraRodada : String = ""
 
+    private var verificaAcertoPalavra: Int = 0
     private var jogandoRodada : Boolean = false
     private lateinit var forcaViewModel: ForcaViewModel
 
+    private var relatorioRodadaAcerto: String = ""
+    private var relatorioRodadaErro: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,10 +74,12 @@ class JogarActivity : AppCompatActivity(){
             btnIniciarRodadas.isEnabled = false
 
             btnIniciarRodadas.setOnClickListener {
-                forcaViewModel.getIdentificadoresPorDificuldade(nivelDificuldade)
-                activityJogarBinding.rodadaAtualTv.text = "Rodada atual: 1"
-                jogandoRodada = true
-                btnIniciarRodadas.isEnabled = false
+                if (rodadaAtual < rodadas){
+                    forcaViewModel.getIdentificadoresPorDificuldade(nivelDificuldade)
+                    activityJogarBinding.rodadaAtualTv.text = "Rodada atual: ${rodadaAtual + 1}"
+                    jogandoRodada = true
+                    btnIniciarRodadas.isEnabled = false
+                }
             }
         }
         forcaViewModel.identificadoresPalavrasDificuldade.observe(this){
@@ -91,13 +96,13 @@ class JogarActivity : AppCompatActivity(){
         forcaViewModel.palavraMld.observe(this){ lista ->
             lista.forEach { palavra ->
                 palavra.palavra.also { palavra ->
-                    palavraRodada = palavra
-                    activityJogarBinding.palavraTv.text = palavraRodada
+                    palavraRodada = removerAcentos(palavra).toString()
                 }
                 palavra.letras.also { letras ->
                     qtdeLetrasRodada = letras
                 }
             }
+            activityJogarBinding.palavraTv.text = "Dica: $qtdeLetrasRodada letras"
         }
 
     }
@@ -149,33 +154,53 @@ class JogarActivity : AppCompatActivity(){
             zBtn.setOnClickListener { letraSelecionada("z", zBtn ) }
         }
     }
+
     fun letraSelecionada(letra: String, button: Button) {
         if (jogandoRodada){
             button.isEnabled = false
-            adicionaLetraSelecionada(letra)
 
-            if (qtdeLetrasRodadaAtual <= 6) {
-                if (palavraRodada.contains(letra, false)){
+            if (qtdeLetrasRodadaAtual <= qtdeLetrasRodada) {
+                if (palavraRodada.contains(letra, true)){
                     Toast.makeText(applicationContext,
                         "Correta $qtdeLetrasRodada - $qtdeLetrasRodadaAtual",
                         Toast.LENGTH_SHORT).show()
+                    verificaAcertoPalavra++
+                    adicionaLetraSelecionada(letra)
                 }
                 else{
                     Toast.makeText(applicationContext,
                         "Errada $qtdeLetrasRodada - $qtdeLetrasRodadaAtual",
                         Toast.LENGTH_SHORT).show()
                 }
+
                 qtdeLetrasRodadaAtual++
+
+                if (verificaAcertoPalavra == qtdeLetrasRodada){
+                    Toast.makeText(applicationContext,
+                        "Acertou palavra",
+                        Toast.LENGTH_LONG).show()
+                    activityJogarBinding.palavraTv.text = palavraRodada
+
+                    reiniciarRodada(true)
+                    //exibe e adiciona palavra na listagem de acertos
+                }
             }
             else{
+                Toast.makeText(applicationContext,
+                    "Errou palavra",
+                    Toast.LENGTH_LONG).show()
+                activityJogarBinding.palavraTv.text = "Rodada $rodadaAtual: $palavraRodada"
+
+               reiniciarRodada(false)
+                //exibe e adiciona palavra na listagem de acertos
+            }
+        }
+            /*else{
                 //Vou adicionar apenas se o cara perder ou ganhar a rodada
                 rodadaAtual ++
-            }
-
-
-
-        }
+            }*/
     }
+
     fun adicionaLetraSelecionada(letra: String){
         var letrasSelecionadas: String
         with(activityJogarBinding){
@@ -191,5 +216,68 @@ class JogarActivity : AppCompatActivity(){
         Toast.makeText(applicationContext, letra,Toast.LENGTH_SHORT).show()
     }
 
+    fun removerAcentos(str: String?): String? {
+        return Normalizer.normalize(str, Normalizer.Form.NFD).replace("[^\\p{ASCII}]", "")
+    }
 
+    fun reiniciarRodada(acerto: Boolean){
+        with(activityJogarBinding){
+            aBtn.isEnabled = true
+            bBtn.isEnabled = true
+            cBtn.isEnabled = true
+            dBtn.isEnabled = true
+            eBtn.isEnabled = true
+            fBtn.isEnabled = true
+            gBtn.isEnabled = true
+            hBtn.isEnabled = true
+            iBtn.isEnabled = true
+            jBtn.isEnabled = true
+            kBtn.isEnabled = true
+            lBtn.isEnabled = true
+            mBtn.isEnabled = true
+            nBtn.isEnabled = true
+            oBtn.isEnabled = true
+            pBtn.isEnabled = true
+            qBtn.isEnabled = true
+            rBtn.isEnabled = true
+            sBtn.isEnabled = true
+            tBtn.isEnabled = true
+            uBtn.isEnabled = true
+            vBtn.isEnabled = true
+            wBtn.isEnabled = true
+            xBtn.isEnabled = true
+            yBtn.isEnabled = true
+            zBtn.isEnabled = true
+            btnIniciarRodadas.isEnabled = true
+            jogandoRodada = false
+
+            if (acerto) {
+                if (relatorioRodadaAcerto == ""){
+                    relatorioRodadaAcerto = "Acertos: $palavraRodada"
+                }
+                else{
+                    relatorioRodadaAcerto += ", $palavraRodada"
+                }
+            }else{
+                if (relatorioRodadaErro == ""){
+                    relatorioRodadaErro = "Erros: $palavraRodada"
+                }
+                else{
+                    relatorioRodadaErro += ", $palavraRodada"
+                }
+            }
+            if (rodadaAtual < rodadas) {
+                rodadaAtual ++
+            }else{
+                rodadaAtual = 0
+            }
+            activityJogarBinding.rodadaAtualTv.text = "Rodada atual: $rodadaAtual"
+            letrasSelecionadasTv.text = ""
+            palavraRodada = ""
+            qtdeLetrasRodadaAtual = 1
+
+            activityJogarBinding.relatorioTv.text = "Relatório:\n $relatorioRodadaAcerto\n $relatorioRodadaErro"
+        }
+    }
 }
+
