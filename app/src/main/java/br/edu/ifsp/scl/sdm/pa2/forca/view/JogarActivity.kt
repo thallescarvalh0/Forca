@@ -64,7 +64,12 @@ class JogarActivity : AppCompatActivity(){
                     activityJogarBinding.btnIniciarRodadas.isEnabled = true
                     activityJogarBinding.nivelDificuldadeTv.text = "Dificuldade: $nivelDificuldade"
                     activityJogarBinding.quantidadeRodadasTv.text = "Quantidade Rodadas: $rodadas"
+                    activityJogarBinding.relatorioTv.text = ""
+                    relatorioRodadaAcerto = ""
+                    relatorioRodadaErro = ""
+                    rodadaAtual = 0
                 }
+
             }
         }
 
