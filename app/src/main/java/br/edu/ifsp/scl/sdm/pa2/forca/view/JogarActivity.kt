@@ -1,13 +1,16 @@
 package br.edu.ifsp.scl.sdm.pa2.forca.view
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.toColor
 import androidx.lifecycle.ViewModelProvider
 import br.edu.ifsp.scl.sdm.pa2.forca.R
 import br.edu.ifsp.scl.sdm.pa2.forca.databinding.ActivityJogarBinding
@@ -19,6 +22,7 @@ class JogarActivity : AppCompatActivity(){
     companion object{
         const val  NIVEL_DIFICULDADE = "DIFICULDADE"
         const val  QUANTIDADE_RODADAS = "RODADAS"
+        const val  MAX_TENTATIVAS = 6
     }
 
     private val activityJogarBinding: ActivityJogarBinding by lazy {
@@ -39,6 +43,8 @@ class JogarActivity : AppCompatActivity(){
 
     private var relatorioRodadaAcerto: String = ""
     private var relatorioRodadaErro: String = ""
+
+    private var tentativasAdivinhar: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +74,7 @@ class JogarActivity : AppCompatActivity(){
                     relatorioRodadaAcerto = ""
                     relatorioRodadaErro = ""
                     rodadaAtual = 0
+                    tentativasAdivinhar = 0
                 }
 
             }
@@ -86,6 +93,11 @@ class JogarActivity : AppCompatActivity(){
                     btnIniciarRodadas.isEnabled = false
                 }
             }
+
+            btnTentativaAcerto.setOnClickListener {
+                val palavraTentativa = removerAcentos(tentativaAcertoEt.text.toString()).toString()
+                if (palavraTentativa != "" ){verificaPalavra(palavraTentativa, true)}
+            }
         }
         forcaViewModel.identificadoresPalavrasDificuldade.observe(this){
             forcaViewModel.getIdentificadorPalavra(rodadas)
@@ -102,6 +114,7 @@ class JogarActivity : AppCompatActivity(){
             lista.forEach { palavra ->
                 palavra.palavra.also { palavra ->
                     palavraRodada = removerAcentos(palavra).toString()
+                    Log.i("palavraFORCA", palavraRodada)
                 }
                 palavra.letras.also { letras ->
                     qtdeLetrasRodada = letras
@@ -164,46 +177,75 @@ class JogarActivity : AppCompatActivity(){
         if (jogandoRodada){
             button.isEnabled = false
 
-            if (qtdeLetrasRodadaAtual <= qtdeLetrasRodada) {
-                if (palavraRodada.contains(letra, true)){
-                    Toast.makeText(applicationContext,
-                        "Correta $qtdeLetrasRodada - $qtdeLetrasRodadaAtual",
-                        Toast.LENGTH_SHORT).show()
-                    verificaAcertoPalavra++
-                    adicionaLetraSelecionada(letra)
+            verificaPalavra(letra,false)
+        }
+    }
+
+    fun verificaPalavra(palavra: String, palavraCompleta: Boolean){
+        if (jogandoRodada){
+            if (tentativasAdivinhar < MAX_TENTATIVAS ){
+                if (!palavraCompleta){
+                    if (qtdeLetrasRodadaAtual <= qtdeLetrasRodada) {
+                        if (palavraRodada.contains(palavra, true)){
+                            Toast.makeText(applicationContext,
+                                "Correta $qtdeLetrasRodada - $qtdeLetrasRodadaAtual",
+                                Toast.LENGTH_SHORT).show()
+                            verificaAcertoPalavra++
+                            adicionaLetraSelecionada(palavra)
+                        }
+                        else{
+                            Toast.makeText(applicationContext,
+                                "Errada $qtdeLetrasRodada - $qtdeLetrasRodadaAtual",
+                                Toast.LENGTH_SHORT).show()
+                        }
+
+                        qtdeLetrasRodadaAtual++
+
+                        if (verificaAcertoPalavra == qtdeLetrasRodada){
+                            Toast.makeText(applicationContext,
+                                "Acertou letra",
+                                Toast.LENGTH_SHORT).show()
+                            //activityJogarBinding.palavraTv.text = palavraRodada
+
+                            reiniciarRodada(true)
+                            //exibe e adiciona palavra na listagem de acertos
+                        }
+                    }
+                    else{
+                        Toast.makeText(applicationContext,
+                            "Sem letras para selecionar!\nLetras rodada: $qtdeLetrasRodada - Tentativas ${qtdeLetrasRodadaAtual - 1}",
+                            Toast.LENGTH_SHORT).show()
+                    }
                 }
                 else{
-                    Toast.makeText(applicationContext,
-                        "Errada $qtdeLetrasRodada - $qtdeLetrasRodadaAtual",
-                        Toast.LENGTH_SHORT).show()
-                }
-
-                qtdeLetrasRodadaAtual++
-
-                if (verificaAcertoPalavra == qtdeLetrasRodada){
-                    Toast.makeText(applicationContext,
-                        "Acertou palavra",
-                        Toast.LENGTH_LONG).show()
-                    activityJogarBinding.palavraTv.text = palavraRodada
-
-                    reiniciarRodada(true)
-                    //exibe e adiciona palavra na listagem de acertos
+                    if (palavraRodada.contains(palavra, true)){
+                        Toast.makeText(applicationContext,
+                            "Acertou palavra",
+                            Toast.LENGTH_SHORT).show()
+                        reiniciarRodada(true)
+                    }
+                    else{
+                        tentativasAdivinhar ++
+                        desenhaCorpo()
+                    }
                 }
             }
-            else{
-                Toast.makeText(applicationContext,
-                    "Errou palavra",
-                    Toast.LENGTH_LONG).show()
-                activityJogarBinding.palavraTv.text = "Rodada $rodadaAtual: $palavraRodada"
-
-               reiniciarRodada(false)
-                //exibe e adiciona palavra na listagem de acertos
+            else
+            {
+                reiniciarRodada(false)
             }
         }
-            /*else{
-                //Vou adicionar apenas se o cara perder ou ganhar a rodada
-                rodadaAtual ++
-            }*/
+    }
+
+    fun desenhaCorpo(){
+        when(tentativasAdivinhar){
+            1 -> {activityJogarBinding.cabecaJogarTv.setTextColor(Color.RED)}
+            2 -> {activityJogarBinding.troncoTv.setTextColor(Color.RED)}
+            3 -> {activityJogarBinding.braco1Tv.setTextColor(Color.RED)}
+            4 -> {activityJogarBinding.braco2Tv.setTextColor(Color.RED)}
+            5 -> {activityJogarBinding.perna1Tv.setTextColor(Color.RED)}
+            6 -> {activityJogarBinding.perna2Tv.setTextColor(Color.RED)}
+        }
     }
 
     fun adicionaLetraSelecionada(letra: String){
@@ -256,6 +298,13 @@ class JogarActivity : AppCompatActivity(){
             btnIniciarRodadas.isEnabled = true
             jogandoRodada = false
 
+            activityJogarBinding.cabecaJogarTv.setTextColor(Color.BLACK)
+            activityJogarBinding.troncoTv.setTextColor(Color.BLACK)
+            activityJogarBinding.braco1Tv.setTextColor(Color.BLACK)
+            activityJogarBinding.braco2Tv.setTextColor(Color.BLACK)
+            activityJogarBinding.perna1Tv.setTextColor(Color.BLACK)
+            activityJogarBinding.perna2Tv.setTextColor(Color.BLACK)
+
             if (acerto) {
                 if (relatorioRodadaAcerto == ""){
                     relatorioRodadaAcerto = "Acertos: $palavraRodada"
@@ -280,6 +329,7 @@ class JogarActivity : AppCompatActivity(){
             letrasSelecionadasTv.text = ""
             palavraRodada = ""
             qtdeLetrasRodadaAtual = 1
+            tentativasAdivinhar = 0
 
             activityJogarBinding.relatorioTv.text = "Relatório:\n $relatorioRodadaAcerto\n $relatorioRodadaErro"
         }
